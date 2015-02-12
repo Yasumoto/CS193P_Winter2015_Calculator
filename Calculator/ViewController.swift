@@ -18,9 +18,18 @@ class ViewController: UIViewController {
     var decimalNumberEntered = false
 
     @IBAction func clear() {
+        userIsInTheMiddleOfTypingANumber = false
+        operandStack = [Double]()
+        decimalNumberEntered = false
+        display.text = "\(0)"
+        history.text = "\(0)"
     }
     
     @IBAction func decimalEntered() {
+        if (!decimalNumberEntered && userIsInTheMiddleOfTypingANumber) || display.text! == "0" {
+            userIsInTheMiddleOfTypingANumber = true
+            display.text! += "."
+        }
     }
     
     @IBAction func operate(sender: UIButton) {
@@ -29,15 +38,15 @@ class ViewController: UIViewController {
             enter()
         }
         switch operation {
-        case "+":  performOperation { $0 + $1 }
-        case "-":  performOperation { $0 - $1 }
-        case "×":  performOperation { $0 * $1 }
-        case "÷":  performOperation { $1 / $0 }
-        case "√":  performOperation { sqrt($0) }
-        case "sin": performOperation { sin($0) }
-        case "cos": performOperation { cos($0) }
-        case "π": appendPi()
-        default : break
+            case "+":  performOperation { $0 + $1 }
+            case "-":  performOperation { $0 - $1 }
+            case "×":  performOperation { $0 * $1 }
+            case "÷":  performOperation { $1 / $0 }
+            case "√":  performSingleOperation { sqrt($0) }
+            case "sin": performSingleOperation { sin($0) }
+            case "cos": performSingleOperation { cos($0) }
+            case "π": appendConstant(M_PI)
+            default : break
         }
     }
     
@@ -65,18 +74,21 @@ class ViewController: UIViewController {
         }
     }
     
-    func performOperation(operation: (Double) -> Double) {
+    /* Is this some newfangled Swift 1.2 compiler bug?
+        'Method 'performOperation' redeclares Objective-C method 'performOperation:'
+    */
+    func performSingleOperation(operation: (Double) -> Double) {
         if operandStack.count >= 1 {
             displayValue = operation(operandStack.removeLast())
             enter()
         }
     }
     
-    func appendPi () {
+    func appendConstant (constant : Double) {
         if userIsInTheMiddleOfTypingANumber {
             enter()
         }
-        display.text = "\(M_PI)"
+        display.text = "\(constant)"
         enter()
         
     }
