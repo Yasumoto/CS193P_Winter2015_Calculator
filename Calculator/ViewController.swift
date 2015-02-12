@@ -11,11 +11,18 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var display: UILabel!
+    @IBOutlet weak var history: UILabel!
     
     var userIsInTheMiddleOfTypingANumber : Bool = false
     var operandStack = Array<Double>()
     var decimalNumberEntered = false
 
+    @IBAction func clear() {
+    }
+    
+    @IBAction func decimalEntered() {
+    }
+    
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
